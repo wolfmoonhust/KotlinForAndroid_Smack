@@ -23,12 +23,14 @@
 
     <TextView
         android:id="@+id/userNameNavHeader"
-        android:layout_width="379dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
         android:text="@string/nav_header_title"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/userImageNavHeader"
         app:layout_constraintTop_toTopOf="@+id/userImageNavHeader" />
 
@@ -47,7 +49,7 @@
         android:layout_height="32dp"
         android:layout_marginBottom="8dp"
         android:background="@android:color/transparent"
-        android:onClick="loginBtnNavHeaderClicked"
+        android:onClick="loginBtnNavClicked"
         android:text="LOGIN"
         android:textAlignment="center"
         app:layout_constraintBottom_toBottomOf="parent"
