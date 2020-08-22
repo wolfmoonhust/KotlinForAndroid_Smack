@@ -6,8 +6,7 @@ import com.android.volley.Response
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
-import com.example.smack.utilities.URL_LOGIN
-import com.example.smack.utilities.URL_REGISTER
+import com.example.smack.utilities.*
 import org.json.JSONObject
 
 
@@ -23,8 +22,8 @@ object AuthService {
         complete: (Boolean) -> Unit
     ) {
         val jsonBody = JSONObject()
-        jsonBody.put("email", email)
-        jsonBody.put("password", password)
+        jsonBody.put(ACCOUNT_EMAIL, email)
+        jsonBody.put(ACCOUNT_PASSWORD, password)
 
         val requestBody = jsonBody.toString()
 
@@ -50,8 +49,8 @@ object AuthService {
 
     fun loginUser(context: Context, email: String, password: String, complete: (Boolean) -> Unit) {
         val jsonBody = JSONObject()
-        jsonBody.put("email", email)
-        jsonBody.put("password", password)
+        jsonBody.put(ACCOUNT_EMAIL, email)
+        jsonBody.put(ACCOUNT_PASSWORD, password)
 
         val requestBody = jsonBody.toString()
 
@@ -60,8 +59,8 @@ object AuthService {
                 println(response)
                 try {
                     //parse json object
-                    userEmail = response.getString("user")
-                    authToken = response.getString("token")
+                    userEmail = response.getString(RESPONSE_USER)
+                    authToken = response.getString(RESPONSE_TOKEN)
                     isLoggedIn = true
                     complete(true)
 
@@ -73,7 +72,7 @@ object AuthService {
 
             }, Response.ErrorListener { error ->
                 // where we deal with our error
-                Log.d("ERROR", "Could not register user: $error")
+                Log.d("ERROR", "Could not login user: $error")
                 complete(false)
             }) {
                 override fun getBodyContentType(): String {
@@ -87,6 +86,57 @@ object AuthService {
             }
 
         Volley.newRequestQueue(context).add(loginRequest)
+
+    }
+
+    fun createUser(
+        context: Context,
+        name: String,
+        email: String,
+        avatarName: String,
+        avatarColor: String,
+        complete: (Boolean) -> Unit
+    ) {
+        val jsonBody = JSONObject()
+        jsonBody.put(ACCOUNT_NAME, name)
+        jsonBody.put(ACCOUNT_EMAIL, email)
+        jsonBody.put(ACCOUNT_AVATAR_NAME, avatarName)
+        jsonBody.put(ACCOUNT_AVATAR_COLOR, avatarColor)
+        val requestBody = jsonBody.toString()
+
+        val createUserRequest =
+            object : JsonObjectRequest(Method.POST, URL_CREATE_USER, null, Response.Listener {response ->
+                println(response)
+                try {
+                    UserDataService.name = response.getString(ACCOUNT_NAME)
+                    UserDataService.email = response.getString(ACCOUNT_EMAIL)
+                    UserDataService.avatarName = response.getString(ACCOUNT_AVATAR_NAME)
+                    UserDataService.avatarColor =  response.getString(ACCOUNT_AVATAR_COLOR)
+                    UserDataService.id = response.getString(ACCOUNT_ID)
+                    complete(true)
+                }catch (exception: Exception){
+                    println(exception)
+                    complete(false)
+                }
+            }, Response.ErrorListener { error ->
+                Log.d("ERROR", "Could not add user: $error")
+                complete(false)
+            }) {
+                override fun getBodyContentType(): String {
+                    return "application/json; charset=utf-8"
+                }
+
+                override fun getBody(): ByteArray {
+                    return requestBody.toByteArray()
+                }
+
+                override fun getHeaders(): MutableMap<String, String> {
+                    val headers = HashMap<String, String>()
+                    headers.put("Authorization", "Bearer $authToken")
+                    return headers
+                }
+            }
+        Volley.newRequestQueue(context).add(createUserRequest)
 
     }
 
