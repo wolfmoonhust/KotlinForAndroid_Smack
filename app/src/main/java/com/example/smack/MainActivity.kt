@@ -70,6 +70,7 @@ class MainActivity : AppCompatActivity() {
 
     fun loginBtnNavClicked(view: View) {
         if (AuthService.isLoggedIn) {
+            //logout
             UserDataService.logout()
             userNameNavHeader.text = ""
             userEmailNavHeader.text = ""
