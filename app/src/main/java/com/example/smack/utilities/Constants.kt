@@ -17,3 +17,6 @@ const val ACCOUNT_PASSWORD = "password"
 
 const val RESPONSE_TOKEN = "token"
 const val RESPONSE_USER =  "user"
+
+//broadcast contants
+const val BROADCAST_USER_DATA_CHANGE = "BROADCAST_USER_DATA_CHANGE"
