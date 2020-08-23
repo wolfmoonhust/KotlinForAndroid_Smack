@@ -63,6 +63,13 @@ class MainActivity : AppCompatActivity() {
         toggle.syncState()
 
         setAdapter()
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+            userDataChangeReceiver, IntentFilter(
+                BROADCAST_USER_DATA_CHANGE
+            )
+        )
+
         channel_list.setOnItemClickListener { adapterView, view, position, l ->
             selectedChannel = MessageService.channels[position]
             drawer_layout.closeDrawer(GravityCompat.START)
@@ -77,11 +84,7 @@ class MainActivity : AppCompatActivity() {
 
 
     override fun onResume() {
-        LocalBroadcastManager.getInstance(this).registerReceiver(
-            userDataChangeReceiver, IntentFilter(
-                BROADCAST_USER_DATA_CHANGE
-            )
-        )
+
 
         super.onResume()
     }
@@ -185,7 +188,6 @@ class MainActivity : AppCompatActivity() {
                 )
 
                 MessageService.channels.add(newChannel)
-                println("${newChannel.name} ${newChannel.description} ${newChannel.id}")
                 channelAdapter.notifyDataSetChanged()
             }
         }
@@ -197,15 +199,15 @@ class MainActivity : AppCompatActivity() {
             UserDataService.logout()
             channelAdapter.notifyDataSetChanged()
             messageAdapter.notifyDataSetChanged()
-            
+
             userNameNavHeader.text = ""
             userEmailNavHeader.text = ""
             userImageNavHeader.setImageResource(R.drawable.profiledefault)
             userImageNavHeader.setBackgroundColor(Color.TRANSPARENT)
             loginBtnNavHeader.text = "Login"
+            mainChannelName.text="Please log in"
         } else {
             val loginIntent = Intent(this, LoginActivity::class.java)
-            Log.d("phongtx", "loginBtnNavHeaderClicked")
             startActivity(loginIntent)
         }
 
