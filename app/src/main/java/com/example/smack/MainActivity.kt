@@ -17,6 +17,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.smack.adapter.MessageAdapter
 import com.example.smack.controller.App
 import com.example.smack.model.Channel
 import com.example.smack.model.Message
@@ -35,6 +37,8 @@ class MainActivity : AppCompatActivity() {
 
     val socket = IO.socket(SOCKET_URL)
     lateinit var channelAdapter: ArrayAdapter<Channel>
+    lateinit var messageAdapter: MessageAdapter
+
     var selectedChannel: Channel? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -98,6 +102,11 @@ class MainActivity : AppCompatActivity() {
         channelAdapter =
             ArrayAdapter(this, android.R.layout.simple_list_item_1, MessageService.channels)
         channel_list.adapter = channelAdapter
+
+        messageAdapter = MessageAdapter(this, MessageService.messages)
+        messageListView.adapter = messageAdapter
+        val layoutManager = LinearLayoutManager(this)
+        messageListView.layoutManager = layoutManager
     }
 
 
@@ -154,7 +163,8 @@ class MainActivity : AppCompatActivity() {
                         timeStamp
                     )
                     MessageService.messages.add(newMessage)
-                    println("onNewMessage ${newMessage.message}")
+                    messageAdapter.notifyDataSetChanged()
+                    messageListView.smoothScrollToPosition(messageAdapter.itemCount - 1)
                 }
             }
         }
@@ -185,6 +195,9 @@ class MainActivity : AppCompatActivity() {
         if (App.prefs.isLoggedIn) {
             //logout
             UserDataService.logout()
+            channelAdapter.notifyDataSetChanged()
+            messageAdapter.notifyDataSetChanged()
+            
             userNameNavHeader.text = ""
             userEmailNavHeader.text = ""
             userImageNavHeader.setImageResource(R.drawable.profiledefault)
@@ -203,10 +216,10 @@ class MainActivity : AppCompatActivity() {
 
         if (selectedChannel != null) {
             MessageService.getMessages(selectedChannel!!.id) { complete ->
-                if(complete) {
-                    //TODO show in recycle view
-                    for ( message in MessageService.messages) {
-                        println(message.message)
+                if (complete) {
+                    messageAdapter.notifyDataSetChanged()
+                    if (messageAdapter.itemCount > 0) {
+                        messageListView.smoothScrollToPosition(messageAdapter.itemCount - 1)
                     }
                 }
             }
