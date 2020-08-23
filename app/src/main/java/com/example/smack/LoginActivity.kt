@@ -29,7 +29,7 @@ class LoginActivity : AppCompatActivity() {
         val email = loginEmailText.text.toString()
         val password = loginPasswordText.text.toString()
         if (email.isNotEmpty() && password.isNotEmpty()) {
-            AuthService.loginUser(this, email, password) { loginSuccess ->
+            AuthService.loginUser(email, password) { loginSuccess ->
                 if (loginSuccess) {
                     AuthService.findUserByEmail(this) { findSuccess ->
                         if (findSuccess) {
@@ -59,13 +59,14 @@ class LoginActivity : AppCompatActivity() {
         loginCreateUserBtn.isEnabled = !enable
     }
 
-    fun hideKeyboard(){
+    fun hideKeyboard() {
         val inputManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        if(inputManager.isAcceptingText){
-            inputManager.hideSoftInputFromWindow(currentFocus?.windowToken,0)
+        if (inputManager.isAcceptingText) {
+            inputManager.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
 
         }
     }
+
     fun showErorToast() {
         Toast.makeText(this, "Something is wrong! Please re-check!", Toast.LENGTH_LONG).show()
         enableSpinner(false)

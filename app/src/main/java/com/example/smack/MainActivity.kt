@@ -26,13 +26,14 @@ import com.example.smack.utilities.SOCKET_URL
 import io.socket.client.IO
 import io.socket.emitter.Emitter
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.android.synthetic.main.nav_header_main.*
 
 class MainActivity : AppCompatActivity() {
 
     val socket = IO.socket(SOCKET_URL)
     lateinit var channelAdapter: ArrayAdapter<Channel>
-
+    var selectedChannel: Channel? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,9 +56,15 @@ class MainActivity : AppCompatActivity() {
         toggle.syncState()
 
         setAdapter()
-
+        channel_list.setOnItemClickListener { adapterView, view, position, l ->
+            selectedChannel = MessageService.channels[position]
+            drawer_layout.closeDrawer(GravityCompat.START)
+            updateWithChannel()
+        }
         if (App.prefs.isLoggedIn) {
-//            AuthService.findUserByEmail(this)
+            AuthService.findUserByEmail(this) {
+
+            }
         }
     }
 
@@ -107,9 +114,14 @@ class MainActivity : AppCompatActivity() {
                 )
                 loginBtnNavHeader.text = "Logout"
                 if (context != null) {
-                    MessageService.getChannels(context) { complete ->
+                    MessageService.getChannels() { complete ->
                         if (complete) {
-                            channelAdapter.notifyDataSetChanged()
+                            if (MessageService.channels.count() > 0) {
+                                selectedChannel = MessageService.channels[0]
+                                channelAdapter.notifyDataSetChanged()
+                                updateWithChannel()
+                            }
+
                         }
                     }
                 }
@@ -133,6 +145,10 @@ class MainActivity : AppCompatActivity() {
             startActivity(loginIntent)
         }
 
+    }
+
+    fun updateWithChannel() {
+        mainChannelName.text = "#${selectedChannel?.name}"
     }
 
     fun addChannelBtnClicked(view: View) {
