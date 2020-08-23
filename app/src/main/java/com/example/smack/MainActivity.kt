@@ -19,18 +19,21 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.example.smack.services.AuthService
 import com.example.smack.services.UserDataService
 import com.example.smack.utilities.BROADCAST_USER_DATA_CHANGE
+import com.example.smack.utilities.SOCKET_URL
+import io.socket.client.IO
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.nav_header_main.*
 
 class MainActivity : AppCompatActivity() {
 
+    val socket = IO.socket(SOCKET_URL)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
-        hideKeyboard()
+      //  hideKeyboard()
 
 
         val toggle = ActionBarDrawerToggle(
@@ -43,13 +46,32 @@ class MainActivity : AppCompatActivity() {
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
 
+
+//        val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
+//        val navView: NavigationView = findViewById(R.id.nav_view)
+
+    }
+
+
+    override fun onResume() {
         LocalBroadcastManager.getInstance(this).registerReceiver(
             userDataChangeReceiver, IntentFilter(
                 BROADCAST_USER_DATA_CHANGE
             )
         )
-//        val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
-//        val navView: NavigationView = findViewById(R.id.nav_view)
+
+        socket.connect()
+        super.onResume()
+    }
+
+    override fun onPause() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(userDataChangeReceiver)
+        super.onPause()
+    }
+
+    override fun onDestroy() {
+        socket.disconnect()
+        super.onDestroy()
 
     }
 
@@ -105,11 +127,11 @@ class MainActivity : AppCompatActivity() {
                     val channelDescrip =  descripTextField.text.toString()
 
                     //create channel with the name and description
-                    hideKeyboard()
+                    socket.emit("newChannel",channelName, channelDescrip)
             }
                 .setNegativeButton("Cancel") { dialogInterface, i ->
 
-                    hideKeyboard()
+
                 }.show()
         }
     }
