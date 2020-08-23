@@ -1,16 +1,16 @@
 package com.example.smack.services
 
-import android.content.Context
 import com.android.volley.Response
 import com.android.volley.toolbox.JsonArrayRequest
-import com.android.volley.toolbox.Volley
-import com.example.smack.Channel
+import com.example.smack.model.Channel
 import com.example.smack.controller.App
+import com.example.smack.model.Message
 import com.example.smack.utilities.URL_GET_CHANNEL
 
 object MessageService {
 
     val channels = ArrayList<Channel>()
+    val messages = ArrayList<Message>()
 
     fun getChannels(complete: (Boolean) -> Unit) {
         channels.clear()
@@ -22,7 +22,11 @@ object MessageService {
                         val channelName = channel.getString("name")
                         val channelDescrip = channel.getString("description")
                         val channelId = channel.getString("_id")
-                        val newChannel = Channel(channelName, channelDescrip, channelId)
+                        val newChannel = Channel(
+                            channelName,
+                            channelDescrip,
+                            channelId
+                        )
 
                         channels.add(newChannel)
                     }
@@ -49,5 +53,9 @@ object MessageService {
         }
 
         App.prefs.requestQueue.add(channelRequest)
+    }
+
+    fun getMessage(complete: (Boolean) -> Unit){
+
     }
 }
