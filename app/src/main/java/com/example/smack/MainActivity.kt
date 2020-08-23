@@ -17,10 +17,12 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.example.smack.services.AuthService
+import com.example.smack.services.MessageService
 import com.example.smack.services.UserDataService
 import com.example.smack.utilities.BROADCAST_USER_DATA_CHANGE
 import com.example.smack.utilities.SOCKET_URL
 import io.socket.client.IO
+import io.socket.emitter.Emitter
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.nav_header_main.*
 
@@ -33,8 +35,10 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
-      //  hideKeyboard()
 
+
+        socket.connect()
+        socket.on("channelCreated", onNewChannel)
 
         val toggle = ActionBarDrawerToggle(
             this,
@@ -60,16 +64,16 @@ class MainActivity : AppCompatActivity() {
             )
         )
 
-        socket.connect()
         super.onResume()
     }
 
     override fun onPause() {
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(userDataChangeReceiver)
+
         super.onPause()
     }
 
     override fun onDestroy() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(userDataChangeReceiver)
         socket.disconnect()
         super.onDestroy()
 
@@ -121,14 +125,15 @@ class MainActivity : AppCompatActivity() {
                 .setPositiveButton("Add") { dialogInterface, i ->
 
                     val nameTextField = dialogView.findViewById<TextView>(R.id.addChannelNameText)
-                    val descripTextField = dialogView.findViewById<TextView>(R.id.addChannelDescriptionText)
+                    val descripTextField =
+                        dialogView.findViewById<TextView>(R.id.addChannelDescriptionText)
 
                     val channelName = nameTextField.text.toString()
-                    val channelDescrip =  descripTextField.text.toString()
+                    val channelDescrip = descripTextField.text.toString()
 
                     //create channel with the name and description
-                    socket.emit("newChannel",channelName, channelDescrip)
-            }
+                    socket.emit("newChannel", channelName, channelDescrip)
+                }
                 .setNegativeButton("Cancel") { dialogInterface, i ->
 
 
@@ -148,11 +153,24 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun hideKeyboard(){
+    fun hideKeyboard() {
         val inputManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        if(inputManager.isAcceptingText){
-            inputManager.hideSoftInputFromWindow(currentFocus?.windowToken,0)
+        if (inputManager.isAcceptingText) {
+            inputManager.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
 
+        }
+    }
+
+    private val onNewChannel = Emitter.Listener { args ->
+        runOnUiThread {
+            val channelName = args[0] as String
+            val channelDescription = args[1] as String
+            val channelId = args[2] as String
+
+            val newChannel = Channel(channelName, channelDescription, channelId)
+
+            MessageService.channels.add(newChannel)
+            println("${newChannel.name} ${newChannel.description} ${newChannel.id}")
         }
     }
 }
