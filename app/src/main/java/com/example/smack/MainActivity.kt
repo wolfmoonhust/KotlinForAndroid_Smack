@@ -6,7 +6,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Color
 import android.os.Bundle
-import android.os.Message
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -18,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.example.smack.controller.App
 import com.example.smack.services.AuthService
 import com.example.smack.services.MessageService
 import com.example.smack.services.UserDataService
@@ -55,6 +55,10 @@ class MainActivity : AppCompatActivity() {
         toggle.syncState()
 
         setAdapter()
+
+        if (App.prefs.isLoggedIn) {
+//            AuthService.findUserByEmail(this)
+        }
     }
 
 
@@ -80,15 +84,16 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun setAdapter(){
-        channelAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, MessageService.channels)
-        channel_list.adapter =  channelAdapter
+    private fun setAdapter() {
+        channelAdapter =
+            ArrayAdapter(this, android.R.layout.simple_list_item_1, MessageService.channels)
+        channel_list.adapter = channelAdapter
     }
 
 
     val userDataChangeReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
-            if (AuthService.isLoggedIn) {
+            if (App.prefs.isLoggedIn) {
                 userNameNavHeader.text = UserDataService.name
                 userEmailNavHeader.text = UserDataService.email
 
@@ -102,8 +107,8 @@ class MainActivity : AppCompatActivity() {
                 )
                 loginBtnNavHeader.text = "Logout"
                 if (context != null) {
-                    MessageService.getChannels(context){complete->
-                        if(complete){
+                    MessageService.getChannels(context) { complete ->
+                        if (complete) {
                             channelAdapter.notifyDataSetChanged()
                         }
                     }
@@ -114,7 +119,7 @@ class MainActivity : AppCompatActivity() {
 
 
     fun loginBtnNavClicked(view: View) {
-        if (AuthService.isLoggedIn) {
+        if (App.prefs.isLoggedIn) {
             //logout
             UserDataService.logout()
             userNameNavHeader.text = ""
@@ -131,7 +136,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun addChannelBtnClicked(view: View) {
-        if (AuthService.isLoggedIn) {
+        if (App.prefs.isLoggedIn) {
             val builder = AlertDialog.Builder(this)
             val dialogView = layoutInflater.inflate(R.layout.add_channel_dialog, null)
 
