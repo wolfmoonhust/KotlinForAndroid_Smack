@@ -7,6 +7,7 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.smack.mvprefactor.ui.createuser.CreateUserMvpActivity
 import com.example.smack.services.AuthService
 import kotlinx.android.synthetic.main.activity_login.*
 
@@ -25,7 +26,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun loginCreateUserBtnClicked(view: View) {
-        val createUserIntent = Intent(this, CreateUserActivity::class.java)
+        val createUserIntent = Intent(this, CreateUserMvpActivity::class.java)
         startActivity(createUserIntent)
         finish()
     }

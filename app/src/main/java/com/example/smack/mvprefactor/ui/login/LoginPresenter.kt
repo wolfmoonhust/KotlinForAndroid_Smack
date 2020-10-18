@@ -1,5 +1,6 @@
 package com.example.smack.mvprefactor.ui.login
 
+import android.graphics.Color
 import com.example.smack.mvprefactor.base.BasePresenter
 import com.example.smack.services.AuthService
 
@@ -35,15 +36,12 @@ class LoginPresenter<V : LoginMvpView> : BasePresenter<V>(), LoginMvpPresenter<V
 
                 }
             } else {
+                it.enableSpinner(false)
                 it.showToast("Please fill data")
             }
 
-
         }
 
-
     }
-
-
 
 }

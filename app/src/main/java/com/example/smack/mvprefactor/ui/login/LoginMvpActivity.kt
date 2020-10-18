@@ -6,12 +6,10 @@ import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.getSystemService
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.example.smack.CreateUserActivity
 import com.example.smack.R
 import com.example.smack.mvprefactor.base.BaseActivity
+import com.example.smack.mvprefactor.ui.createuser.CreateUserMvpActivity
 import com.example.smack.utilities.BROADCAST_USER_DATA_CHANGE
 import kotlinx.android.synthetic.main.activity_login.*
 
@@ -41,7 +39,7 @@ class LoginMvpActivity:BaseActivity(), LoginMvpView{
     }
 
     override fun loginCreateUserBtnCLicked() {
-        val createUserIntent = Intent(this, CreateUserActivity::class.java)
+        val createUserIntent = Intent(this, CreateUserMvpActivity::class.java)
         startActivity(createUserIntent)
         finish()
     }
