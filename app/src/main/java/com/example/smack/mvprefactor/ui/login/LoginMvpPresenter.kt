@@ -4,5 +4,5 @@ import com.example.smack.mvprefactor.base.MvpPresenter
 
 interface LoginMvpPresenter<V:LoginMvpView>: MvpPresenter<V> {
     fun createUserBtnClicked()
-    fun loginBtnClicked()
+    fun loginBtnClicked(email: String, password: String)
 }

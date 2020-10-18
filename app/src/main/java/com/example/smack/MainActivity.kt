@@ -22,6 +22,7 @@ import com.example.smack.adapter.MessageAdapter
 import com.example.smack.controller.App
 import com.example.smack.model.Channel
 import com.example.smack.model.Message
+import com.example.smack.mvprefactor.ui.login.LoginMvpActivity
 import com.example.smack.services.AuthService
 import com.example.smack.services.MessageService
 import com.example.smack.services.UserDataService
@@ -203,7 +204,7 @@ class MainActivity : AppCompatActivity() {
             loginBtnNavHeader.text = "Login"
             mainChannelName.text="Please log in"
         } else {
-            val loginIntent = Intent(this, LoginActivity::class.java)
+            val loginIntent = Intent(this, LoginMvpActivity::class.java)
             startActivity(loginIntent)
         }
 

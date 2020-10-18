@@ -185,4 +185,42 @@ object AuthService {
         App.prefs.requestQueue.add(findUserRequest)
     }
 
+    fun findUserByEmail(complete: (Boolean) -> Unit) {
+        val findUserRequest = object : JsonObjectRequest(
+            Method.GET,
+            "$URL_GET_USER_BY_EMAIL${App.prefs.userEmail}",
+            null,
+            Response.Listener { response ->
+                try {
+                    UserDataService.name = response.getString(ACCOUNT_NAME)
+                    UserDataService.email = response.getString(ACCOUNT_EMAIL)
+                    UserDataService.avatarName = response.getString(ACCOUNT_AVATAR_NAME)
+                    UserDataService.avatarColor = response.getString(ACCOUNT_AVATAR_COLOR)
+                    UserDataService.id = response.getString(ACCOUNT_ID)
+
+                    complete(true)
+
+                } catch (exception: Exception) {
+                    println(exception)
+                    complete(false)
+                }
+
+            },
+            Response.ErrorListener { error ->
+                println(error)
+                complete(false)
+            }) {
+            override fun getBodyContentType(): String {
+                return "application/json; charset=utf-8"
+            }
+
+            override fun getHeaders(): MutableMap<String, String> {
+                val headers = HashMap<String, String>()
+                headers.put("Authorization", "Bearer ${App.prefs.authToken}")
+                return headers
+            }
+        }
+        App.prefs.requestQueue.add(findUserRequest)
+    }
+
 }

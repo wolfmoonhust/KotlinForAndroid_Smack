@@ -8,11 +8,11 @@ import com.example.smack.mvprefactor.util.CommonUtil
 
 abstract class BaseActivity : AppCompatActivity(), MvpView {
     private var progressDialog: ProgressDialog? = null
-     var mContext: Context? = null
+    var mContext: Context = this
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mContext = this
+
     }
 
     override fun showProgress() {
