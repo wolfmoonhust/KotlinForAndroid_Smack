@@ -20,8 +20,18 @@ class CreateUserActivity : AppCompatActivity() {
     var avatarColor = "[0.5, 0.5, 0.5, 1]"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        initView()
+    }
+
+
+    private fun initView() {
         setContentView(R.layout.activity_create_user)
         createSpinner.visibility = View.INVISIBLE
+
+        createUserBtn.setOnClickListener { createUserClicked(it) }
+        createGenerateBackgroundColorBtn.setOnClickListener { generateBackgroundColorClicked(it) }
+        createAvatarImageView.setOnClickListener{generateUserAvatarClicked(it)}
     }
 
     fun generateUserAvatarClicked(view: View) {

@@ -39,6 +39,6 @@ class LoginMvpActivity:BaseActivity(), LoginMvpView{
     }
 
     private fun initView(){
-
+        
     }
 }

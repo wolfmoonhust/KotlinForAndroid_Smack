@@ -13,17 +13,24 @@ import kotlinx.android.synthetic.main.activity_login.*
 class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
-        loginSpinner.visibility = View.INVISIBLE
+        initView()
     }
 
-    fun loginCreateUserBtnClicked(view: View) {
+    private fun initView() {
+        setContentView(R.layout.activity_login)
+        loginSpinner.visibility = View.INVISIBLE
+
+        loginCreateUserBtn.setOnClickListener { loginCreateUserBtnClicked(it) }
+        loginLoginBtn.setOnClickListener { loginLoginBtnClicked(it) }
+    }
+
+    private fun loginCreateUserBtnClicked(view: View) {
         val createUserIntent = Intent(this, CreateUserActivity::class.java)
         startActivity(createUserIntent)
         finish()
     }
 
-    fun loginLoginBtnClicked(view: View) {
+    private fun loginLoginBtnClicked(view: View) {
         enableSpinner(true)
         hideKeyboard()
         val email = loginEmailText.text.toString()
@@ -49,7 +56,7 @@ class LoginActivity : AppCompatActivity() {
 
     }
 
-    fun enableSpinner(enable: Boolean) {
+    private fun enableSpinner(enable: Boolean) {
         if (enable) {
             loginSpinner.visibility = View.VISIBLE
         } else {
@@ -59,7 +66,7 @@ class LoginActivity : AppCompatActivity() {
         loginCreateUserBtn.isEnabled = !enable
     }
 
-    fun hideKeyboard() {
+    private fun hideKeyboard() {
         val inputManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         if (inputManager.isAcceptingText) {
             inputManager.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
@@ -67,7 +74,7 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    fun showErorToast() {
+    private fun showErorToast() {
         Toast.makeText(this, "Something is wrong! Please re-check!", Toast.LENGTH_LONG).show()
         enableSpinner(false)
     }

@@ -43,14 +43,20 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        val toolbar: Toolbar = findViewById(R.id.toolbar)
-        setSupportActionBar(toolbar)
 
+        initView()
 
         socket.connect()
         socket.on("channelCreated", onNewChannel)
         socket.on("messageCreated", onNewMessage)
+
+
+    }
+
+    private fun initView(){
+        setContentView(R.layout.activity_main)
+        val toolbar: Toolbar = findViewById(R.id.toolbar)
+        setSupportActionBar(toolbar)
 
         val toggle = ActionBarDrawerToggle(
             this,
@@ -80,19 +86,9 @@ class MainActivity : AppCompatActivity() {
 
             }
         }
+        sendMessageBtn.setOnClickListener{sendMessageBtnClicked((it))}
     }
 
-
-    override fun onResume() {
-
-
-        super.onResume()
-    }
-
-    override fun onPause() {
-
-        super.onPause()
-    }
 
     override fun onDestroy() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(userDataChangeReceiver)
