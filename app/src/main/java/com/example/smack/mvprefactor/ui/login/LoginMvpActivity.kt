@@ -21,7 +21,7 @@ class LoginMvpActivity:BaseActivity(), LoginMvpView{
         super.onCreate(savedInstanceState)
         initView()
 
-        mPresenter = LoginPresenter<LoginMvpView>()
+        mPresenter = LoginPresenter()
         mPresenter.onAttach(this)
     }
 

@@ -17,7 +17,7 @@ class CreateUserMvpActivity : BaseActivity(), CreateUserMvpView {
         super.onCreate(savedInstanceState)
 
         initView()
-        mPresenter = CreateUserPresenter<CreateUserMvpView>()
+        mPresenter = CreateUserPresenter()
         mPresenter.onAttach(this)
 
     }
