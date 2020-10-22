@@ -216,4 +216,10 @@ class MainMvpActivity : BaseActivity(), MainMvpView {
     override fun closeDrawer() {
         drawer_layout.closeDrawer(GravityCompat.START)
     }
+
+    override fun sendDataChange() {
+        val userDataChange = Intent(BROADCAST_USER_DATA_CHANGE)
+        Log.d(LOG_TAG, "sendDataChange")
+        LocalBroadcastManager.getInstance(mContext).sendBroadcast(userDataChange)
+    }
 }

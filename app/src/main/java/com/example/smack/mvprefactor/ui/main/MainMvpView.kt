@@ -24,4 +24,6 @@ interface MainMvpView : MvpView {
     fun updateNewChannelsData(newChannel: ArrayList<Channel>)
 
     fun closeDrawer()
+
+    fun sendDataChange()
 }

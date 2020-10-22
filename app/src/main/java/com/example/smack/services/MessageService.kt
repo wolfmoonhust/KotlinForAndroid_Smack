@@ -78,15 +78,17 @@ object MessageService {
                         val newMessage = Message(messageBody, userName,channelId, userAvatar,userAvatarColor,id,timeStamp)
                         this.messages.add(newMessage)
                     }
+                    Log.d(LOG_TAG, "getMessages size: " + messages.size)
                     complete(true)
                 } catch (exception: Exception) {
+                    Log.d(LOG_TAG, "getMessages exception: $exception")
                     println(exception)
                     complete(false)
                 }
 
 
             }, Response.ErrorListener { error ->
-                println("getMessage $error")
+                Log.d(LOG_TAG, "getMessages error: $error")
                 complete(false)
 
             }) {

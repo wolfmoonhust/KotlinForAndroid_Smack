@@ -76,7 +76,8 @@ class MainPresenter<V : MainMvpView> : BasePresenter<V>(), MainMvpPresenter<V> {
         socket.on("messageCreated", onNewMessage)
 
         if (App.prefs.isLoggedIn) {
-            AuthService.findUserByEmail() {
+            AuthService.findUserByEmail() {success ->
+                if (success) getView()?.sendDataChange()
 
             }
         }
@@ -111,12 +112,12 @@ class MainPresenter<V : MainMvpView> : BasePresenter<V>(), MainMvpPresenter<V> {
     override fun onAttach(view: V?) {
         super.onAttach(view)
         getView()?.setAdapter(MessageService.channels, MessageService.messages)
-        if (App.prefs.isLoggedIn){
-            AuthService.findUserByEmail {
-                success ->
-                Log.d(LOG_TAG, "onAttach findUserByEmail $success")
-            }
-        }
+//        if (App.prefs.isLoggedIn){
+//            AuthService.findUserByEmail {
+//                success ->
+//                Log.d(LOG_TAG, "onAttach findUserByEmail $success")
+//            }
+//        }
     }
 
     override fun onDetach() {

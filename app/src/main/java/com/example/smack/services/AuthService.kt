@@ -13,10 +13,11 @@ import org.json.JSONObject
 
 
 object AuthService {
-//    var isLoggedIn = false
+    //    var isLoggedIn = false
 //    var userName = ""
 //    var userEmail = ""
 //    var authToken = ""
+    val LOG_TAG = if (DEBUG) PRE_FIX + javaClass.simpleName else javaClass.simpleName
 
     fun registerUser(
         email: String,
@@ -145,7 +146,7 @@ object AuthService {
         App.prefs.requestQueue.add(createUserRequest)
     }
 
-    fun findUserByEmail(context:Context, complete: (Boolean) -> Unit) {
+    fun findUserByEmail(context: Context, complete: (Boolean) -> Unit) {
         val findUserRequest = object : JsonObjectRequest(
             Method.GET,
             "$URL_GET_USER_BY_EMAIL${App.prefs.userEmail}",
@@ -157,7 +158,7 @@ object AuthService {
                     UserDataService.avatarName = response.getString(ACCOUNT_AVATAR_NAME)
                     UserDataService.avatarColor = response.getString(ACCOUNT_AVATAR_COLOR)
                     UserDataService.id = response.getString(ACCOUNT_ID)
-
+                    Log.d(LOG_TAG, "findUserByEmail ${UserDataService.name}")
                     val userDataChange = Intent(BROADCAST_USER_DATA_CHANGE)
                     LocalBroadcastManager.getInstance(context).sendBroadcast(userDataChange)
                     complete(true)
@@ -197,7 +198,7 @@ object AuthService {
                     UserDataService.avatarName = response.getString(ACCOUNT_AVATAR_NAME)
                     UserDataService.avatarColor = response.getString(ACCOUNT_AVATAR_COLOR)
                     UserDataService.id = response.getString(ACCOUNT_ID)
-
+                    Log.d(LOG_TAG, "findUserByEmail ${UserDataService.name}")
                     complete(true)
 
                 } catch (exception: Exception) {

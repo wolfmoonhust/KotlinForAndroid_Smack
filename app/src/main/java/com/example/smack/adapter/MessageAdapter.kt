@@ -10,12 +10,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.smack.R
 import com.example.smack.model.Message
 import com.example.smack.services.UserDataService
+import com.example.smack.utilities.DEBUG
+import com.example.smack.utilities.PRE_FIX
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
 class MessageAdapter(var context: Context, var messages: ArrayList<Message>) :
     RecyclerView.Adapter<MessageAdapter.MessageViewHolder>() {
+    val LOG_TAG = if (DEBUG) PRE_FIX + javaClass.simpleName else javaClass.simpleName
 
     inner class MessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val userImage = itemView.findViewById<ImageView>(R.id.messageUserImage)
@@ -66,5 +69,6 @@ class MessageAdapter(var context: Context, var messages: ArrayList<Message>) :
     fun setNewData(newMessages: ArrayList<Message>){
         messages.clear()
         messages.addAll(newMessages)
+
     }
 }
