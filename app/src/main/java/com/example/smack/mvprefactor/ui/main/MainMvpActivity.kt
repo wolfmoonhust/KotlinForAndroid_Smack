@@ -6,6 +6,8 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Color
 import android.os.Bundle
+import android.provider.SyncStateContract
+import android.util.Log
 import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import android.widget.TextView
@@ -17,20 +19,19 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.smack.R
 import com.example.smack.adapter.MessageAdapter
-import com.example.smack.controller.App
 import com.example.smack.model.Channel
 import com.example.smack.model.Message
 import com.example.smack.mvprefactor.base.BaseActivity
 import com.example.smack.mvprefactor.ui.login.LoginMvpActivity
-import com.example.smack.services.MessageService
-import com.example.smack.services.UserDataService
 import com.example.smack.utilities.BROADCAST_USER_DATA_CHANGE
+import com.example.smack.utilities.DEBUG
+import com.example.smack.utilities.PRE_FIX
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.android.synthetic.main.nav_header_main.*
 
 class MainMvpActivity : BaseActivity(), MainMvpView {
-
+    val LOG_TAG = if (DEBUG) PRE_FIX + javaClass.simpleName else javaClass.simpleName
     lateinit var mPresenter: MainMvpPresenter<MainMvpView>
 
     lateinit var channelAdapter: ArrayAdapter<Channel>
@@ -74,16 +75,18 @@ class MainMvpActivity : BaseActivity(), MainMvpView {
         )
 
         channel_list.setOnItemClickListener { _, _, position, _ ->
-            {
-
-            }
+            mPresenter.channelListItemClicked(position)
         }
+
+        addChannelBtn.setOnClickListener { mPresenter.addChannelClicked() }
+        loginBtnNavHeader.setOnClickListener { mPresenter.loginBtnNavClicked() }
 
 
     }
 
     private val userDataChangeReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
+            Log.d(LOG_TAG, "userDataChange")
             mPresenter.userDataChanged()
         }
     }
@@ -135,7 +138,7 @@ class MainMvpActivity : BaseActivity(), MainMvpView {
         }
     }
 
-    override fun setAdapter(channels: ArrayList<Channel>,messages: ArrayList<Message>) {
+    override fun setAdapter(channels: ArrayList<Channel>, messages: ArrayList<Message>) {
         channelAdapter =
             ArrayAdapter(this, android.R.layout.simple_list_item_1, channels)
         channel_list.adapter = channelAdapter
@@ -146,12 +149,12 @@ class MainMvpActivity : BaseActivity(), MainMvpView {
         messageListView.layoutManager = layoutManager
     }
 
-    override fun updateWithChannel(mainChannel: String, complete: Boolean, itemCount: Int){
-        mainChannelName.text =  mainChannel
+    override fun updateWithChannel(mainChannel: String, complete: Boolean, itemCount: Int) {
+        mainChannelName.text = mainChannel
         if (complete) {
             messageAdapter.notifyDataSetChanged()
-            if ( itemCount > 0) {
-                messageListView.smoothScrollToPosition(itemCount -1)
+            if (itemCount > 0) {
+                messageListView.smoothScrollToPosition(itemCount - 1)
             }
         }
     }
@@ -170,11 +173,11 @@ class MainMvpActivity : BaseActivity(), MainMvpView {
         userImageNavHeader.setImageResource(R.drawable.profiledefault)
         userImageNavHeader.setBackgroundColor(Color.TRANSPARENT)
         loginBtnNavHeader.text = "Login"
-        mainChannelName.text="Please log in"
+        mainChannelName.text = "Please log in"
     }
 
     override fun updateWithChannel(mainChannel: String) {
-        TODO("Not yet implemented")
+        mainChannelName.text = mainChannel
     }
 
     override fun clearMessageField() {
@@ -194,5 +197,23 @@ class MainMvpActivity : BaseActivity(), MainMvpView {
         userImageNavHeader.setImageResource(resourceId)
         userImageNavHeader.setBackgroundColor(backgroundColor)
         loginBtnNavHeader.text = "Logout"
+    }
+
+    override fun updateNewMessagesData(newMessage: ArrayList<Message>) {
+        messageAdapter.setNewData(newMessage)
+        messageAdapter.notifyDataSetChanged()
+        if ( messageAdapter.itemCount > 0) {
+            messageListView.smoothScrollToPosition(messageAdapter.itemCount - 1)
+        }
+    }
+
+    override fun updateNewChannelsData(newChannel: ArrayList<Channel>) {
+        channelAdapter.clear()
+        channelAdapter.addAll(newChannel)
+        channelAdapter.notifyDataSetChanged()
+    }
+
+    override fun closeDrawer() {
+        drawer_layout.closeDrawer(GravityCompat.START)
     }
 }

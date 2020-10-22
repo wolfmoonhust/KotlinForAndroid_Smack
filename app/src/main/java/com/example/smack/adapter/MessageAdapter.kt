@@ -12,8 +12,9 @@ import com.example.smack.model.Message
 import com.example.smack.services.UserDataService
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
-class MessageAdapter(val context: Context, val messages: ArrayList<Message>) :
+class MessageAdapter(var context: Context, var messages: ArrayList<Message>) :
     RecyclerView.Adapter<MessageAdapter.MessageViewHolder>() {
 
     inner class MessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -60,7 +61,10 @@ class MessageAdapter(val context: Context, val messages: ArrayList<Message>) :
 
         val outDateString = SimpleDateFormat("E, h:mm a", Locale.getDefault())
         return outDateString.format(convertedDate)
+    }
 
-
+    fun setNewData(newMessages: ArrayList<Message>){
+        messages.clear()
+        messages.addAll(newMessages)
     }
 }

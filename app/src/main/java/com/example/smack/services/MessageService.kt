@@ -1,15 +1,18 @@
 package com.example.smack.services
 
+import android.util.Log
 import com.android.volley.Response
 import com.android.volley.toolbox.JsonArrayRequest
 import com.example.smack.controller.App
 import com.example.smack.model.Channel
 import com.example.smack.model.Message
+import com.example.smack.utilities.DEBUG
+import com.example.smack.utilities.PRE_FIX
 import com.example.smack.utilities.URL_GET_CHANNEL
 import com.example.smack.utilities.URL_GET_MESSAGE
 
 object MessageService {
-
+    val LOG_TAG = if (DEBUG)  PRE_FIX + javaClass.simpleName else javaClass.simpleName
     val channels = ArrayList<Channel>()
     val messages = ArrayList<Message>()
 
@@ -31,14 +34,15 @@ object MessageService {
 
                         channels.add(newChannel)
                     }
+                    Log.d(LOG_TAG, "getChannels size: " + channels.size)
                     complete(true)
                 } catch (exception: Exception) {
-                    println(exception)
+                    Log.d(LOG_TAG, "getChannels e: $exception")
                     complete(false)
                 }
 
             }, Response.ErrorListener { error ->
-                println("getChannel $error")
+                Log.d(LOG_TAG, "getChannels error: $error")
                 complete(false)
             }) {
             override fun getBodyContentType(): String {

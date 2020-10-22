@@ -26,3 +26,5 @@ const val RESPONSE_USER =  "user"
 
 //broadcast contants
 const val BROADCAST_USER_DATA_CHANGE = "BROADCAST_USER_DATA_CHANGE"
+const val DEBUG = true
+const val PRE_FIX = "phongtx"

@@ -1,5 +1,6 @@
 package com.example.smack.mvprefactor.ui.main
 
+import android.util.Log
 import com.example.smack.controller.App
 import com.example.smack.model.Channel
 import com.example.smack.model.Message
@@ -7,13 +8,15 @@ import com.example.smack.mvprefactor.base.BasePresenter
 import com.example.smack.services.AuthService
 import com.example.smack.services.MessageService
 import com.example.smack.services.UserDataService
+import com.example.smack.utilities.DEBUG
+import com.example.smack.utilities.PRE_FIX
 import com.example.smack.utilities.SOCKET_URL
 import io.socket.client.IO
 import io.socket.emitter.Emitter
 
 class MainPresenter<V : MainMvpView> : BasePresenter<V>(), MainMvpPresenter<V> {
+    val LOG_TAG = if (DEBUG) PRE_FIX + javaClass.simpleName else javaClass.simpleName
     val socket = IO.socket(SOCKET_URL)
-
 
     init {
         val onNewMessage = Emitter.Listener { args ->
@@ -105,6 +108,17 @@ class MainPresenter<V : MainMvpView> : BasePresenter<V>(), MainMvpPresenter<V> {
     }
 
 
+    override fun onAttach(view: V?) {
+        super.onAttach(view)
+        getView()?.setAdapter(MessageService.channels, MessageService.messages)
+        if (App.prefs.isLoggedIn){
+            AuthService.findUserByEmail {
+                success ->
+                Log.d(LOG_TAG, "onAttach findUserByEmail $success")
+            }
+        }
+    }
+
     override fun onDetach() {
         socket.disconnect()
         super.onDetach()
@@ -115,16 +129,26 @@ class MainPresenter<V : MainMvpView> : BasePresenter<V>(), MainMvpPresenter<V> {
     }
 
     override fun updateWithChannel() {
-        TODO("Not yet implemented")
-    }
+        getView()?.let {
+            it.updateWithChannel(selectedChannel!!.name)
+            it.closeDrawer()
+        }
 
-    override fun updateLogin(loggedIn: Boolean) {
-        TODO("Not yet implemented")
+        if (selectedChannel != null) {
+            MessageService.getMessages(selectedChannel!!.id) { complete ->
+                if (complete){
+                   getView()?.let {
+                       it.updateNewMessagesData(MessageService.messages)
+                   }
+                }
+            }
+        }
     }
 
     override fun loginBtnNavClicked() {
         getView()?.let {
             if (App.prefs.isLoggedIn) {
+                UserDataService.logout()
                 it.logOut()
             } else {
                 it.startLoginActivity()
@@ -158,5 +182,14 @@ class MainPresenter<V : MainMvpView> : BasePresenter<V>(), MainMvpPresenter<V> {
             }
         }
 
+    }
+
+    override fun addChannelClicked() {
+        getView()?.showChannelDialog()
+    }
+
+    override fun channelListItemClicked(position: Int) {
+       selectedChannel = MessageService.channels[position]
+        updateWithChannel()
     }
 }

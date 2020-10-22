@@ -88,6 +88,9 @@ class MainActivity : AppCompatActivity() {
             }
         }
         sendMessageBtn.setOnClickListener{sendMessageBtnClicked((it))}
+
+        addChannelBtn.setOnClickListener { addChannelBtnClicked(it) }
+        loginBtnNavHeader.setOnClickListener { loginBtnNavClicked(it) }
     }
 
 
@@ -225,7 +228,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun addChannelBtnClicked(view: View) {
+    private fun addChannelBtnClicked(view: View) {
         if (App.prefs.isLoggedIn) {
             val builder = AlertDialog.Builder(this)
             val dialogView = layoutInflater.inflate(R.layout.add_channel_dialog, null)
@@ -279,7 +282,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun hideKeyboard() {
+    private fun hideKeyboard() {
         val inputManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         if (inputManager.isAcceptingText) {
             inputManager.hideSoftInputFromWindow(currentFocus?.windowToken, 0)

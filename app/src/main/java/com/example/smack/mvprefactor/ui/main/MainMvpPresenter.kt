@@ -7,8 +7,10 @@ interface MainMvpPresenter<V: MainMvpView>: MvpPresenter<V> {
     fun sendMessage(message: String)
     fun addChannel(channelName: String, channelDescrip: String)
     fun updateWithChannel()
-    fun updateLogin(loggedIn : Boolean)
     fun loginBtnNavClicked()
     fun userDataChanged()
+    fun addChannelClicked()
+
+    fun channelListItemClicked( position: Int)
 
 }

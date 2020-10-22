@@ -5,7 +5,7 @@ import com.example.smack.mvprefactor.base.MvpView
 
 interface LoginMvpView:MvpView {
     fun loginCreateUserBtnCLicked()
-    fun loginLoginBtnClicked()
+
     fun showToast(message: String)
     fun hideKeyboard()
     fun enableSpinner(enable: Boolean)
